@@ -1,85 +1,91 @@
 'use client'
 
+import { Canvas } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useMemo, useRef, useState } from 'react'
 import { Line, useCursor, MeshDistortMaterial } from '@react-three/drei'
 import { useRouter } from 'next/navigation'
+import { EffectComposer, Bloom } from '@react-three/postprocessing'
+import { BlurPass, Resizer, KernelSize, Resolution } from 'postprocessing'
 
-export const Blob = ({ route = '/', ...props }) => {
-  const router = useRouter()
-  const [hovered, hover] = useState(false)
-  useCursor(hovered)
-  return (
-    <mesh
-      onClick={() => router.push(route)}
-      onPointerOver={() => hover(true)}
-      onPointerOut={() => hover(false)}
-      {...props}
-    >
-      <sphereGeometry args={[1, 64, 64]} />
-      <MeshDistortMaterial roughness={0.5} color={hovered ? 'hotpink' : '#1fb2f5'} />
-    </mesh>
-  )
-}
+// CustomGeometryParticles component
+const CustomGeometryParticles = ({ count }) => {
+  const points = useRef()
 
-export const Logo = ({ route = '/blob', ...props }) => {
-  const mesh = useRef(null)
-  const router = useRouter()
+  const particlesPosition = useMemo(() => {
+    const positions = new Float32Array(count * 3)
+    const distance = 1
 
-  const [hovered, hover] = useState(false)
-  const points = useMemo(() => new THREE.EllipseCurve(0, 0, 3, 1.15, 0, 2 * Math.PI, false, 0).getPoints(100), [])
+    for (let i = 0; i < count; i++) {
+      const theta = THREE.MathUtils.randFloatSpread(360)
+      const phi = THREE.MathUtils.randFloatSpread(360)
 
-  useCursor(hovered)
-  useFrame((state, delta) => {
-    const t = state.clock.getElapsedTime()
-    mesh.current.rotation.y = Math.sin(t) * (Math.PI / 8)
-    mesh.current.rotation.x = Math.cos(t) * (Math.PI / 8)
-    mesh.current.rotation.z -= delta / 4
+      let x = distance * Math.sin(theta) * Math.cos(phi)
+      let y = distance * Math.sin(theta) * Math.sin(phi)
+      let z = distance * Math.cos(theta)
+
+      positions.set([x, y, z], i * 3)
+    }
+
+    return positions
+  }, [count])
+
+  useFrame((state) => {
+    const { clock } = state
+    const time = clock.getElapsedTime()
+    console.log(time)
+
+    if (points.current) {
+      console.log('useFrame called') // Check if useFrame is being called
+      for (let i = 0; i < count; i++) {
+        const i3 = i * 3
+
+        points.current.geometry.attributes.position.array[i3] += Math.sin(time + i) * 0.01
+        points.current.geometry.attributes.position.array[i3 + 1] += Math.cos(time + i) * 0.01
+        points.current.geometry.attributes.position.array[i3 + 2] += Math.sin(time + i) * 0.01
+      }
+
+      points.current.geometry.attributes.position.needsUpdate = true
+    }
   })
 
   return (
-    <group ref={mesh} {...props}>
-      {/* @ts-ignore */}
-      <Line worldUnits points={points} color='#1fb2f5' lineWidth={0.15} />
-      {/* @ts-ignore */}
-      <Line worldUnits points={points} color='#1fb2f5' lineWidth={0.15} rotation={[0, 0, 1]} />
-      {/* @ts-ignore */}
-      <Line worldUnits points={points} color='#1fb2f5' lineWidth={0.15} rotation={[0, 0, -1]} />
-      <mesh onClick={() => router.push(route)} onPointerOver={() => hover(true)} onPointerOut={() => hover(false)}>
-        <sphereGeometry args={[0.55, 64, 64]} />
-        <meshPhysicalMaterial roughness={0.5} color={hovered ? 'hotpink' : '#1fb2f5'} />
-      </mesh>
-    </group>
+    <points ref={points}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach='attributes-position'
+          count={particlesPosition.length / 3}
+          array={particlesPosition}
+          itemSize={3}
+        />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.012}
+        color='#5786F5'
+        sizeAttenuation
+        depthWrite={false}
+        map={sparklesTexture}
+        transparent={true}
+      />
+    </points>
   )
 }
 
-export function Duck(props) {
-  const { scene } = useGLTF('/duck.glb')
-
-  useFrame((state, delta) => (scene.rotation.y += delta))
-
-  return <primitive object={scene} {...props} />
-}
-export function Dog(props) {
-  const { scene } = useGLTF('/dog.glb')
-
-  return <primitive object={scene} {...props} />
-}
-
-export function MakeMagic(props) {
+// MakeMagic component
+export function MakeMagic({
+  particleCount = 20,
+  particleSizeMax = 0.8,
+  particleSizeMin = 0.3,
+  width = 10,
+  height = 3,
+  depth = 3,
+  ...props
+}) {
   const { scene } = useGLTF('/magic.glb')
   const texture = useMemo(() => new THREE.TextureLoader().load('/img/gradient.jpg'), [])
-
-  // // Create a custom material
-  // const customMaterial = useMemo(
-  //   () =>
-  //     new THREE.MeshMatcapMaterial({
-  //       matcap: texture, // Apply the texture as Matcap
-  //     }),
-  //   [texture],
-  // )
+  const sparklesTexture = useMemo(() => new THREE.TextureLoader().load('/img/sparkle.png'), [])
 
   // Create a custom material
   const customMaterial = useMemo(
@@ -110,12 +116,51 @@ export function MakeMagic(props) {
     })
   }, [scene, customMaterial])
 
+  // ----Particle System ---- Create random planes with sparkles texture
+  const planes = useMemo(() => {
+    const planesArray = []
+    for (let i = 0; i < particleCount; i++) {
+      const particleSize = THREE.MathUtils.randFloatSpread(particleSizeMin, particleSizeMax)
+      const plane = new THREE.Mesh(
+        new THREE.PlaneGeometry(particleSize, particleSize),
+        new THREE.MeshBasicMaterial({ map: sparklesTexture, transparent: true }),
+      )
+      plane.position.set((Math.random() - 0.5) * width, (Math.random() - 0.5) * height, (Math.random() - 0.5) * depth)
+      planesArray.push(plane)
+    }
+    return planesArray
+  }, [sparklesTexture, particleCount, particleSizeMax, particleSizeMin, width, height, depth])
+
+  // // Animate the scale of the particles
+  // useFrame((state) => {
+  //   const elapsedTime = state.clock.getElapsedTime()
+  //   const scale = (Math.sin(elapsedTime * Math.PI) + 1) / 2 // Oscillate between 0 and 1
+  //   planes.forEach((plane) => {
+
+  //     plane.scale.set(scale * particleSize, scale * particleSize, scale * particleSize)
+  //   })
+  // })
+
   return (
     <>
       {/* Add lighting */}
       <ambientLight color='#ffb3d9' intensity={0.2} />
       <directionalLight color='#ff2949' intensity={2} position={[0, 0.5, 0.6]} />
+      <EffectComposer>
+        <Bloom
+          intensity={0.5} // The bloom intensity.
+          kernelSize={KernelSize.LARGE} // blur kernel size
+          luminanceThreshold={0.9} // luminance threshold. Raise this value to mask out darker elements in the scene.
+          luminanceSmoothing={0.025} // smoothness of the luminance threshold. Range is [0, 1]
+          mipmapBlur={false} // Enables or disables mipmap blur.
+          resolutionX={Resolution.AUTO_SIZE} // The horizontal resolution.
+          resolutionY={Resolution.AUTO_SIZE} // The vertical resolution.
+        />
+      </EffectComposer>
       <primitive object={scene} {...props} />
+      {planes.map((plane, index) => (
+        <primitive key={index} object={plane} />
+      ))}
     </>
   )
 }

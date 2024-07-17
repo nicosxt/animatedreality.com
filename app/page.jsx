@@ -1,5 +1,6 @@
 'use client'
 
+import MainComponent from '@/components/canvas/Examples'
 import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
 
