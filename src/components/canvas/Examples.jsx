@@ -92,7 +92,7 @@ export function MakeMagic({
     () =>
       new THREE.MeshStandardMaterial({
         map: texture, // Apply the texture
-        metalness: 0.5, // Adjust metalness
+        metalness: 0.4, // Adjust metalness
         roughness: 0.3, // Adjust roughness
         emissive: new THREE.Color('#ff2949'),
         emissiveMap: texture,

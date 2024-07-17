@@ -1,7 +1,7 @@
-const title = 'React Three Next Starter'
-const url = 'https://react-three-next.vercel.app/'
-const description = 'The easiest and fastest way to create a 3D website using React Three Fiber and NextJS'
-const author = 'Author'
+const title = 'Animated Reality'
+const url = 'https://animatedreality.com'
+const description = 'A Creative Studio Building Protopias with Frontier Technologies'
+const author = 'Syntonikka'
 const twitter = '@pmndrs'
 
 export default function Head() {
@@ -55,6 +55,14 @@ export default function Head() {
         Be sure validate your Twitter card markup on the documentation site. */}
       <meta name='twitter:card' content='summary' />
       <meta name='twitter:site' content={twitter} />
+
+      {/* Google Font */}
+      <link rel='preconnect' href='https://fonts.googleapis.com' />
+      <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin />
+      <link
+        href='https://fonts.googleapis.com/css2?family=Sometype+Mono:ital,wght@0,400..700;1,400..700&display=swap'
+        rel='stylesheet'
+      />
     </>
   )
 }

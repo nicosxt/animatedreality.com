@@ -29,15 +29,12 @@ const Common = dynamic(() => import('@/components/canvas/View').then((mod) => mo
 export default function Page() {
   return (
     <>
-      <div className='relative z-10 mx-auto flex w-full flex-col flex-wrap items-center md:flex-row lg:w-4/5'>
+      <div className='relative z-10 mx-auto flex w-full flex-col flex-wrap items-center md:flex-row md:w-4/5'>
         {/* jumbo */}
-        <div className='relative z-20 flex w-full flex-col items-start justify-center p-12 text-center md:w-2/5 md:text-left'>
-          <h1 className='my-4 text-5xl font-bold leading-tight'>Animated Reality</h1>
-          <p className='w-full text-1xl uppercase pb-3'>An XR Creative Studio</p>
-          <p className='mb-8 text-1xl leading-normal'>
-            Our Mission is to leverage cutting-edge technology to build new narratives that enable connected communities
-            and flourishing ecosystems.
-          </p>
+        <div className='relative z-20 flex w-full flex-col items-start justify-center p-6 text-center md:text-left'>
+          {/* <h1 className='my-4 text-5xl font-bold leading-tight'>Animated Reality</h1> */}
+          <img src='/img/title_rainbow.png' alt='Title Rainbow' className='md:w-2/5 h-auto pb-6' />
+          <p className='w-full text-1xl uppercase pb-3 sometype-mono-regular'>An XR Creative Studio</p>
         </div>
 
         {/* <div className='w-full text-center md:w-3/5'>
@@ -50,7 +47,19 @@ export default function Page() {
         </div> */}
       </div>
 
-      <div className='mx-auto flex w-full flex-col flex-wrap items-center p-12 md:flex-row  lg:w-4/5'>
+      <div className='fixed z-10 bottom-0 left-1/2 transform -translate-x-1/2 md:w-4/5'>
+        <p className='mb-8 text-1xl leading-normal text-center sometype-mono-regular'>
+          Our Mission is to leverage cutting-edge technology to build new narratives that enable connected communities
+          and flourishing ecosystems.
+        </p>
+        <p className='pb-6 mb-8 text-1xl leading-normal text-center sometype-mono-regular'>
+          <a href='https://animatedreality.substack.com/subscribe' style={{ textDecoration: 'underline' }}>
+            Subscribe
+          </a>
+        </p>
+      </div>
+
+      <div className='mx-auto flex h-full w-full flex-col flex-wrap items-center p-12 md:flex-row  lg:w-4/5'>
         {/* first row */}
         {/* <div className='relative h-48 w-full py-6 sm:w-1/2 md:my-12 md:mb-40'>
           <h2 className='mb-3 text-3xl font-bold leading-none text-gray-800'>Events are propagated</h2>
