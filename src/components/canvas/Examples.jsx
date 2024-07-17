@@ -16,7 +16,8 @@ export const Blob = ({ route = '/', ...props }) => {
       onClick={() => router.push(route)}
       onPointerOver={() => hover(true)}
       onPointerOut={() => hover(false)}
-      {...props}>
+      {...props}
+    >
       <sphereGeometry args={[1, 64, 64]} />
       <MeshDistortMaterial roughness={0.5} color={hovered ? 'hotpink' : '#1fb2f5'} />
     </mesh>
@@ -65,4 +66,56 @@ export function Dog(props) {
   const { scene } = useGLTF('/dog.glb')
 
   return <primitive object={scene} {...props} />
+}
+
+export function MakeMagic(props) {
+  const { scene } = useGLTF('/magic.glb')
+  const texture = useMemo(() => new THREE.TextureLoader().load('/img/gradient.jpg'), [])
+
+  // // Create a custom material
+  // const customMaterial = useMemo(
+  //   () =>
+  //     new THREE.MeshMatcapMaterial({
+  //       matcap: texture, // Apply the texture as Matcap
+  //     }),
+  //   [texture],
+  // )
+
+  // Create a custom material
+  const customMaterial = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        map: texture, // Apply the texture
+        metalness: 0.5, // Adjust metalness
+        roughness: 0.3, // Adjust roughness
+        emissive: new THREE.Color('#ff2949'),
+        emissiveMap: texture,
+        emissiveIntensity: 0.5,
+      }),
+    [],
+  )
+
+  if (texture) {
+    customMaterial.emissiveMap = texture
+    customMaterial.emissiveMap.needsUpdate = true
+    customMaterial.needsUpdate = true // Ensure the material updates
+  }
+
+  // Apply the custom material to the scene
+  useMemo(() => {
+    scene.traverse((child) => {
+      if (child.isMesh) {
+        child.material = customMaterial
+      }
+    })
+  }, [scene, customMaterial])
+
+  return (
+    <>
+      {/* Add lighting */}
+      <ambientLight color='#ffb3d9' intensity={0.2} />
+      <directionalLight color='#ff2949' intensity={2} position={[0, 0.5, 0.6]} />
+      <primitive object={scene} {...props} />
+    </>
+  )
 }
