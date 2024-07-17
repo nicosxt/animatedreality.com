@@ -34,7 +34,10 @@ export default function Page() {
         <div className='relative z-20 flex w-full flex-col items-start justify-center p-6 text-center md:text-left'>
           {/* <h1 className='my-4 text-5xl font-bold leading-tight'>Animated Reality</h1> */}
           <img src='/img/title_rainbow.png' alt='Title Rainbow' className='md:w-2/5 h-auto pb-6' />
-          <p className='w-full text-1xl uppercase pb-3 sometype-mono-regular'>An XR Creative Studio</p>
+          <p className='w-full text-1xl pb-3 sometype-mono-regular md:w-2/5'>
+            Our Mission is to leverage XR, AI and web3 technology to build new narratives that enable Protopian
+            lifestyles, interconnected communities and flourishing ecosystems.
+          </p>
         </div>
 
         {/* <div className='w-full text-center md:w-3/5'>
@@ -48,10 +51,10 @@ export default function Page() {
       </div>
 
       <div className='fixed z-10 bottom-0 left-1/2 transform -translate-x-1/2 md:w-4/5'>
-        <p className='mb-8 text-1xl leading-normal text-center sometype-mono-regular'>
+        {/* <p className='mb-8 text-1xl leading-normal text-center sometype-mono-regular'>
           Our Mission is to leverage cutting-edge technology to build new narratives that enable connected communities
           and flourishing ecosystems.
-        </p>
+        </p> */}
         <p className='pb-6 mb-8 text-1xl leading-normal text-center sometype-mono-regular'>
           <a href='https://animatedreality.substack.com/subscribe' style={{ textDecoration: 'underline' }}>
             Subscribe
