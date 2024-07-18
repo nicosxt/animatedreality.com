@@ -39,7 +39,6 @@ export default function Page() {
             lifestyles, interconnected communities and flourishing ecosystems.
           </p>
         </div>
-
         {/* <div className='w-full text-center md:w-3/5'>
           <View className='flex h-96 w-full flex-col items-center justify-center'>
             <Suspense fallback={null}>
@@ -72,7 +71,7 @@ export default function Page() {
           <View orbit className='absolute inset-0 z-0 h-full w-full'>
             <Suspense fallback={null}>
               {/* <Dog scale={2} position={[0, -1.6, 0]} rotation={[0.0, -0.3, 0]} /> */}
-              <Magic scale={1} position={[0, 0, 0]} />
+              <Magic scale={0.8} position={[0, 0, 0]} />
               <Common color={'lightpink'} />
             </Suspense>
           </View>
