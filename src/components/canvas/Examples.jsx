@@ -20,6 +20,9 @@ export function MakeMagic({
   depth = 3,
   ...props
 }) {
+  // const { viewport } = useThree()
+  // const scale = Math.min(viewport.width, viewport.height) / 10 // Adjust the divisor as needed
+
   const { scene } = useGLTF('/magic.glb')
   const texture = useMemo(() => new THREE.TextureLoader().load('/img/gradient.jpg'), [])
   const sparklesTexture = useMemo(() => new THREE.TextureLoader().load('/img/sparkle.png'), [])
@@ -84,8 +87,10 @@ export function MakeMagic({
       const blinkFactor = (Math.sin(plane.userData.blinkPhase) + 1) / 2 // 0 to 1
       const newScale = THREE.MathUtils.lerp(1, plane.userData.originalScale, blinkFactor)
       plane.scale.set(newScale, newScale, newScale)
-      //print newScale
-      console.log(newScale)
+      // Set new random location at the end of each blink cycle
+      if (newScale < 0.01) {
+        plane.position.set((Math.random() - 0.5) * width, (Math.random() - 0.5) * height, (Math.random() - 0.5) * depth)
+      }
     })
   })
 

@@ -3,6 +3,7 @@
 import MainComponent from '@/components/canvas/Examples'
 import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
+import { useState, useEffect } from 'react'
 
 const Magic = dynamic(() => import('@/components/canvas/Examples').then((mod) => mod.MakeMagic), { ssr: false })
 
@@ -24,6 +25,17 @@ const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.
 const Common = dynamic(() => import('@/components/canvas/View').then((mod) => mod.Common), { ssr: false })
 
 export default function Page() {
+  const [isPortrait, setIsPortrait] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsPortrait(window.innerWidth < window.innerHeight)
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
     <>
       <div className='relative z-10 mx-auto flex w-full flex-col flex-wrap items-center md:flex-row md:w-4/5'>
@@ -45,12 +57,13 @@ export default function Page() {
         </p>
       </div>
 
-      <div className='mx-auto flex h-full w-full flex-col flex-wrap items-center p-12 md:flex-row  lg:w-4/5'>
+      <div className='mx-auto flex h-full w-full flex-col flex-wrap items-center p-12 md:flex-row lg:w-4/5'>
         <div className='absolute inset-0 h-full w-full'>
           <View orbit className='absolute inset-0 z-0 h-full w-full'>
             <Suspense fallback={null}>
-              <Magic scale={0.8} position={[0, 0, 0]} />
-              <Common color={'lightpink'} />
+              <Magic scale={isPortrait ? 0.3 : 0.75} position={[0, 0, 0]} />
+              <Common color={'#ff9eb3'} />
+              {/* <Common color={'#000333'} /> */}
             </Suspense>
           </View>
         </div>

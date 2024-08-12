@@ -9,4 +9,5 @@ module.exports = {
     extend: {},
   },
   plugins: [],
+  safelist: ['portrait:h-1/2'],
 }
