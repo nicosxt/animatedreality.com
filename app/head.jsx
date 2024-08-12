@@ -18,10 +18,7 @@ export default function Head() {
       {/* Search Engine Optimization Meta Tags */}
       <title>{title}</title>
       <meta name='description' content={description} />
-      <meta
-        name='keywords'
-        content='Software Engineer,Product Manager,Project Manager,Data Scientist,Computer Scientist'
-      />
+      <meta name='keywords' content='Virtual Reality, A.I., 3D, Animation, Prototyping, Creative Studio' />
       <meta name='robots' content='index,follow' />
       <meta name='distribution' content='web' />
       {/* 

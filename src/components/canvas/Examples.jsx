@@ -10,69 +10,6 @@ import { useRouter } from 'next/navigation'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import { BlurPass, Resizer, KernelSize, Resolution } from 'postprocessing'
 
-// CustomGeometryParticles component
-const CustomGeometryParticles = ({ count }) => {
-  const points = useRef()
-
-  const particlesPosition = useMemo(() => {
-    const positions = new Float32Array(count * 3)
-    const distance = 1
-
-    for (let i = 0; i < count; i++) {
-      const theta = THREE.MathUtils.randFloatSpread(360)
-      const phi = THREE.MathUtils.randFloatSpread(360)
-
-      let x = distance * Math.sin(theta) * Math.cos(phi)
-      let y = distance * Math.sin(theta) * Math.sin(phi)
-      let z = distance * Math.cos(theta)
-
-      positions.set([x, y, z], i * 3)
-    }
-
-    return positions
-  }, [count])
-
-  useFrame((state) => {
-    const { clock } = state
-    const time = clock.getElapsedTime()
-    console.log(time)
-
-    if (points.current) {
-      console.log('useFrame called') // Check if useFrame is being called
-      for (let i = 0; i < count; i++) {
-        const i3 = i * 3
-
-        points.current.geometry.attributes.position.array[i3] += Math.sin(time + i) * 0.01
-        points.current.geometry.attributes.position.array[i3 + 1] += Math.cos(time + i) * 0.01
-        points.current.geometry.attributes.position.array[i3 + 2] += Math.sin(time + i) * 0.01
-      }
-
-      points.current.geometry.attributes.position.needsUpdate = true
-    }
-  })
-
-  return (
-    <points ref={points}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach='attributes-position'
-          count={particlesPosition.length / 3}
-          array={particlesPosition}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.012}
-        color='#5786F5'
-        sizeAttenuation
-        depthWrite={false}
-        map={sparklesTexture}
-        transparent={true}
-      />
-    </points>
-  )
-}
-
 // MakeMagic component
 export function MakeMagic({
   particleCount = 20,
@@ -131,21 +68,12 @@ export function MakeMagic({
     return planesArray
   }, [sparklesTexture, particleCount, particleSizeMax, particleSizeMin, width, height, depth])
 
-  // // Animate the scale of the particles
-  // useFrame((state) => {
-  //   const elapsedTime = state.clock.getElapsedTime()
-  //   const scale = (Math.sin(elapsedTime * Math.PI) + 1) / 2 // Oscillate between 0 and 1
-  //   planes.forEach((plane) => {
-
-  //     plane.scale.set(scale * particleSize, scale * particleSize, scale * particleSize)
-  //   })
-  // })
-
   return (
     <>
       {/* Add lighting */}
       <ambientLight color='#ffb3d9' intensity={0.2} />
       <directionalLight color='#ff2949' intensity={2} position={[0, 0.5, 0.6]} />
+      {/* Add Post Processing */}
       <EffectComposer>
         <Bloom
           intensity={0.5} // The bloom intensity.
