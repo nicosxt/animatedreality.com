@@ -53,6 +53,8 @@ export function MakeMagic({
     })
   }, [scene, customMaterial])
 
+  const planesRef = useRef([])
+
   // ----Particle System ---- Create random planes with sparkles texture
   const planes = useMemo(() => {
     const planesArray = []
@@ -63,10 +65,29 @@ export function MakeMagic({
         new THREE.MeshBasicMaterial({ map: sparklesTexture, transparent: true }),
       )
       plane.position.set((Math.random() - 0.5) * width, (Math.random() - 0.5) * height, (Math.random() - 0.5) * depth)
+      // Add properties for animation
+      plane.userData.originalScale = particleSize
+      plane.userData.blinkSpeed = 0.02 + Math.random() * 0.01
+      plane.userData.blinkPhase = Math.random() * Math.PI * 2
+
       planesArray.push(plane)
     }
     return planesArray
   }, [sparklesTexture, particleCount, particleSizeMax, particleSizeMin, width, height, depth])
+
+  // Animation logic
+  useFrame((state, delta) => {
+    planesRef.current.forEach((plane, index) => {
+      if (!plane) return
+      // Blink effect
+      plane.userData.blinkPhase += plane.userData.blinkSpeed
+      const blinkFactor = (Math.sin(plane.userData.blinkPhase) + 1) / 2 // 0 to 1
+      const newScale = THREE.MathUtils.lerp(1, plane.userData.originalScale, blinkFactor)
+      plane.scale.set(newScale, newScale, newScale)
+      //print newScale
+      console.log(newScale)
+    })
+  })
 
   return (
     <>
@@ -87,7 +108,7 @@ export function MakeMagic({
       </EffectComposer>
       <primitive object={scene} {...props} />
       {planes.map((plane, index) => (
-        <primitive key={index} object={plane} />
+        <primitive key={index} object={plane} ref={(el) => (planesRef.current[index] = el)} />
       ))}
     </>
   )
