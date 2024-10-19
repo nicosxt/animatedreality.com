@@ -51,7 +51,7 @@ export default function Page() {
 
       <div className='fixed z-10 bottom-0 left-1/2 transform -translate-x-1/2 md:w-4/5'>
         <p className='pb-6 mb-8 text-1xl leading-normal text-center sometype-mono-regular'>
-          <a href='https://animatedreality.substack.com/subscribe' style={{ textDecoration: 'underline' }}>
+          <a href='https://x.com/syntonikka' style={{ textDecoration: 'underline' }}>
             Subscribe
           </a>
         </p>
